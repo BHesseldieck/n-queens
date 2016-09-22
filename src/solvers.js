@@ -34,16 +34,15 @@ window.countNRooksSolutions = function(n) {
   //   result *= i;
   // }
   // solutionCount = result;
-  var checkForConflict = function(arrayOfArrays) {
-    for (var i = 0; i < arrayOfArrays.length; i++) {
-      if (arrayOfArrays.reduce(function(accum, value) {
-        if (value[i] === 1) {
-          accum++;
-        }
-        return accum;
-      }, 0) > 1) {
-        return true;
+  var checkForConflict = function(arrayOfArrays, rookIndex) {
+
+    if (arrayOfArrays.reduce(function(accum, value) {
+      if (value[rookIndex] === 1) {
+        accum++;
       }
+      return accum;
+    }, 0) > 1) {
+      return true;
     }
     return false;
   };
@@ -51,7 +50,7 @@ window.countNRooksSolutions = function(n) {
   var options = findNRooksSolution(n);
   // options = [[1,0,0],[0,1,0],[0,0,1]]
   // options = [[1,0],[0,1]]
-  var loop = function (num, accumulator) {
+  var loop = function (num, accumulator, rookIndex) {
     //console.log(num, 'accumulator: ', JSON.stringify(accumulator));
     // if (accumulator.length <= n) {
     //   var newAcc = accumulator.slice();
@@ -62,7 +61,7 @@ window.countNRooksSolutions = function(n) {
     //   var conflict = checkBoard.hasAnyRooksConflicts();
     //   //console.log('newAcc', JSON.stringify(newAcc), JSON.stringify(accumulator), conflict);
     // }
-    var conflict = checkForConflict(accumulator);
+    var conflict = checkForConflict(accumulator, rookIndex);
     if ( num === 0 && !conflict) {
        // console.log('pushing', JSON.stringify(accumulator));
       //result.push(accumulator);
@@ -70,8 +69,8 @@ window.countNRooksSolutions = function(n) {
       return;
     }
     if (conflict === false) {
-      options.forEach(function(option) {
-        loop(num - 1,  accumulator.concat([option]));
+      options.forEach(function(option, index) {
+        loop(num - 1,  accumulator.concat([option]), index);
       });
     }
   };
