@@ -36,15 +36,6 @@ window.countNRooksSolutions = function(n) {
   // solutionCount = result;
   var checkForConflict = function(arrayOfArrays) {
     for (var i = 0; i < arrayOfArrays.length; i++) {
-      if (arrayOfArrays[i].reduce(function(acc, val) {
-        if (val === 1) {
-          acc++;
-        }
-        return acc;
-      }, 0) > 1) {
-        return true;
-      }
-
       if (arrayOfArrays.reduce(function(accum, value) {
         if (value[i] === 1) {
           accum++;
