@@ -42,33 +42,39 @@ window.countNRooksSolutions = function(n) {
   var result = [];
 
   var placeRooks = function(funcBoard, row, place) {
+    var continueRec = true;
     var newBoard = _.clone(funcBoard) || new Board({n: n});
-    console.log(newBoard.rows(), row, place, 'cloned');
-    if (row === n && !(newBoard.hasAnyRooksConflicts())) {
+    console.log(JSON.stringify(newBoard.rows()), row, place, 'cloned');
+    if(newBoard._isInBounds(row, place)) {
+      newBoard.togglePiece(row, place);
+      if (newBoard.hasAnyRooksConflicts()) {
+        newBoard.togglePiece(row, place);
+      }
+    }
+    console.log(JSON.stringify(newBoard.rows()), row, place, 'placed');
+    console.log(!(newBoard.hasAnyRooksConflicts()));
+    console.log('i am called', JSON.stringify(newBoard.rows()), row, place);
+    if (row === n - 1){
       result.push(newBoard.rows());
       console.log(newBoard.rows(), 'pushed');
-      return;
+      return
     }
-    console.log(!(newBoard.hasAnyRooksConflicts()));
-    if (!(newBoard.hasAnyRooksConflicts())) {
-          newBoard.rows()[row][place] = 1;
+    for (var i = 0; i < n; i++) {
+      console.log('________________________________________________________________________________________')
+      placeRooks(newBoard, row + 1, i);
+    }
 
-      console.log('i am called', newBoard.rows(), row);
-      newBoard.rows()[row].forEach(function(place, index) {
-        placeRooks(newBoard, row += 1, index);
-      });
-    }
   };
 
 
 
   for (var i = 0; i < n; i++) {
+    console.log('for loop ran', i);
+    console.log('================================================================================')
     placeRooks(undefined, 0, i);
   }
 
-
-
-  console.log('Number of solutions for ' + n + ' rooks:', result.length, result);
+  console.log('Number of solutions for ' + n + ' rooks:', result.length, JSON.stringify(result));
   return result.length;
 };
 
