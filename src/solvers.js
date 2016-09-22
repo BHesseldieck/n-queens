@@ -18,13 +18,8 @@
 window.findNRooksSolution = function(n) {
   var solution = new Board({n: n});
   var context = this;
-  for (var i = 0; i < solution.rows().length; i++) {
-    for (var j = 0; j < solution.rows()[i].length; j++) {
-      solution.rows()[i][j] = 1;
-      if (solution.hasAnyRooksConflicts()) {
-        solution.rows()[i][j] = 0;
-      }
-    }
+  for (var i = 0; i < n; i++) {
+    solution.togglePiece(i, i);
   }
   // console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
   return solution.rows();
@@ -39,54 +34,62 @@ window.countNRooksSolutions = function(n) {
   //   result *= i;
   // }
   // solutionCount = result;
-  var result = [];
+  var checkForConflict = function(arrayOfArrays) {
+    for (var i = 0; i < arrayOfArrays.length; i++) {
+      if (arrayOfArrays[i].reduce(function(acc, val) {
+        if (val === 1) {
+          acc++;
+        }
+        return acc;
+      }, 0) > 1) {
+        return true;
+      }
 
-  var placeRooks = function(funcBoard, row, place) {
-    var newBoard = _.clone(funcBoard) || new Board({n: n});
-    if (funcBoard) {
-      newBoard.n = funcBoard.rows().map(function(board) {
-        return board.map(function(element) {
-          return element;
-        });
+      if (arrayOfArrays.reduce(function(accum, value) {
+        if (value[i] === 1) {
+          accum++;
+        }
+        return accum;
+      }, 0) > 1) {
+        return true;
+      }
+    }
+    return false;
+  };
+  var result = 0;
+  var options = findNRooksSolution(n);
+  // options = [[1,0,0],[0,1,0],[0,0,1]]
+  // options = [[1,0],[0,1]]
+  var loop = function (num, accumulator) {
+    //console.log(num, 'accumulator: ', JSON.stringify(accumulator));
+    // if (accumulator.length <= n) {
+    //   var newAcc = accumulator.slice();
+    //   while (newAcc.length < n) {
+    //     newAcc.push(filler);
+    //   }
+    //   var checkBoard = new Board(newAcc);
+    //   var conflict = checkBoard.hasAnyRooksConflicts();
+    //   //console.log('newAcc', JSON.stringify(newAcc), JSON.stringify(accumulator), conflict);
+    // }
+    var conflict = checkForConflict(accumulator);
+    if ( num === 0 && !conflict) {
+       // console.log('pushing', JSON.stringify(accumulator));
+      //result.push(accumulator);
+      result += 1;
+      return;
+    }
+    if (conflict === false) {
+      options.forEach(function(option) {
+        loop(num - 1,  accumulator.concat([option]));
       });
     }
-    console.log(JSON.stringify(newBoard.rows()), row, place, 'cloned');
-    var run = true;
-    if (newBoard._isInBounds(row, place)) {
-      newBoard.togglePiece(row, place);
-      console.log(JSON.stringify(newBoard.rows()), row, place, 'placed');
-      if (newBoard.hasAnyRooksConflicts()) {
-        console.log(newBoard.hasAnyRooksConflicts(), 'CONFLICT');
-        newBoard.togglePiece(row, place);
-        run = false;
-      }
-    }
-    if (run) {
-      console.log('i am called', JSON.stringify(newBoard.rows()), row, place);
-      if (row === n - 1) {
-        result.push(newBoard.rows());
-        console.log(newBoard.rows(), 'pushed');
-        return;
-      }
-      for (var i = 0; i < n; i++) {
-        console.log('________________________________________________________________________________________')
-        placeRooks(newBoard, row + 1, i);
-      }
-    }
   };
-
-// board.matrix = thing.map(function(board) {return board.map(function(element) {return element})}
-
-
-  for (var i = 0; i < n; i++) {
-    console.log('for loop ran', i);
-    console.log('================================================================================')
-    placeRooks(undefined, 0, i);
-  }
-
-  console.log('Number of solutions for ' + n + ' rooks:', result.length, JSON.stringify(result));
-  return result.length;
+  loop(n, []);
+  console.log('============== FINISHED ====================================================================')
+  console.log(JSON.stringify(result));
+  return result;
 };
+
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
