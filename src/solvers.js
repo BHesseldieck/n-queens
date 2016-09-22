@@ -33,25 +33,50 @@ window.findNRooksSolution = function(n) {
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
   var solutionCount = new Board({n: n});
-  // Problem could be easily solved by calculating the factorial of n
-  var result = 1;
-  for (var i = 1; i <= n; i++) {
-    result *= i;
+  // // Problem could be easily solved by calculating the factorial of n
+  // var result = 1;
+  // for (var i = 1; i <= n; i++) {
+  //   result *= i;
+  // }
+  // solutionCount = result;
+  var result = [];
+
+  var placeRooks = function(funcBoard, row, place) {
+    var newBoard = _.clone(funcBoard) || new Board({n: n});
+    console.log(newBoard.rows(), row, place, 'cloned');
+    if (row === n && !(newBoard.hasAnyRooksConflicts())) {
+      result.push(newBoard.rows());
+      console.log(newBoard.rows(), 'pushed');
+      return;
+    }
+    console.log(!(newBoard.hasAnyRooksConflicts()));
+    if (!(newBoard.hasAnyRooksConflicts())) {
+          newBoard.rows()[row][place] = 1;
+
+      console.log('i am called', newBoard.rows(), row);
+      newBoard.rows()[row].forEach(function(place, index) {
+        placeRooks(newBoard, row += 1, index);
+      });
+    }
+  };
+
+
+
+  for (var i = 0; i < n; i++) {
+    placeRooks(undefined, 0, i);
   }
-  solutionCount = result;
 
 
 
-
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
-  return solutionCount;
+  console.log('Number of solutions for ' + n + ' rooks:', result.length, result);
+  return result.length;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solution = undefined; //fixme
 
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  // console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };
 
@@ -59,6 +84,43 @@ window.findNQueensSolution = function(n) {
 window.countNQueensSolutions = function(n) {
   var solutionCount = undefined; //fixme
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  // console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
