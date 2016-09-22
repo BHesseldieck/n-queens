@@ -42,10 +42,9 @@ window.countNRooksSolutions = function(n) {
   var result = [];
 
   var placeRooks = function(funcBoard, row, place) {
-    var continueRec = true;
     var newBoard = _.clone(funcBoard) || new Board({n: n});
     console.log(JSON.stringify(newBoard.rows()), row, place, 'cloned');
-    if(newBoard._isInBounds(row, place)) {
+    if (newBoard._isInBounds(row, place)) {
       newBoard.togglePiece(row, place);
       if (newBoard.hasAnyRooksConflicts()) {
         newBoard.togglePiece(row, place);
@@ -63,7 +62,6 @@ window.countNRooksSolutions = function(n) {
       console.log('________________________________________________________________________________________')
       placeRooks(newBoard, row + 1, i);
     }
-
   };
 
 
