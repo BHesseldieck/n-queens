@@ -35,7 +35,6 @@ window.countNRooksSolutions = function(n) {
   // }
   // solutionCount = result;
   var checkForConflict = function(arrayOfArrays, rookIndex) {
-
     if (arrayOfArrays.reduce(function(accum, value) {
       if (value[rookIndex] === 1) {
         accum++;
@@ -46,9 +45,10 @@ window.countNRooksSolutions = function(n) {
     }
     return false;
   };
-  var options = findNRooksSolution(n);
-  // options = [[1,0,0],[0,1,0],[0,0,1]]
-  // options = [[1,0],[0,1]]
+
+  var permutations = findNRooksSolution(n);
+  // permutations for n === 3 => [[1,0,0],[0,1,0],[0,0,1]]
+  // permutations for n === 2 => [[1,0],[0,1]]
   var loop = function (num, accumulator, rookIndex) {
     var conflict = checkForConflict(accumulator, rookIndex);
     if ( num === 0 && !conflict) {
@@ -56,14 +56,14 @@ window.countNRooksSolutions = function(n) {
       return;
     } 
     if (conflict === false) {
-      options.forEach(function(option, index) {
-        loop(num - 1,  accumulator.concat([option]), index);
+      permutations.forEach(function(permutation, permutationRookIndex) {
+        loop(num - 1,  accumulator.concat([permutation]), permutationRookIndex);
       });
     }
   };
   loop(n, []);
-  console.log('============== FINISHED ====================================================================')
-  console.log(JSON.stringify(solutionCount));
+  // console.log('============== FINISHED ====================================================================')
+  // console.log(JSON.stringify(solutionCount));
   return solutionCount;
 };
 
@@ -71,19 +71,20 @@ window.countNRooksSolutions = function(n) {
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
   var solutionBoard = new Board({n: n});
-  var currIndex = 0;
+  var currIndex = n > 3 ? 1 : 0;
+  if (n === 2 || n === 3) {
+    return solutionBoard.rows();
+  }
   for (var i = 0; i < solutionBoard.rows().length; i++) {
     solutionBoard.togglePiece(i, currIndex);
-    console.log(JSON.stringify(solutionBoard));
-    if (currIndex === solutionBoard.rows().length) {
-      currIndex = 1;
+    if ((currIndex + 2) >= solutionBoard.rows().length) {
+      currIndex = n > 3 && n !== 8 ? 0 : 1;
     } else {
       currIndex += 2;
     }
   }
-
-  // console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   console.log(JSON.stringify(solutionBoard.rows()));
+  // console.log('Single solution for ' + n + ' queens:', JSON.stringify(solutionBoard));
   return solutionBoard.rows();
 };
 
@@ -97,56 +98,21 @@ window.countNQueensSolutions = function(n) {
       solutionCount += 1;
       return;
     } else {
-      for (var i = 0; i < newBoard.rows()[currRow].length; i++) {
+      for (var i = 0; i < n; i++) {
         newBoard.togglePiece(currRow, i);
         // if no conflict recurse
-        if (!(newBoard.hasAnyQueenConflictsOn(currRow, i))) {
+        if (!newBoard.hasAnyQueenConflictsOn(currRow, i)) {
           placeQueens(currRow + 1); 
         }
-        // toggle piece
         newBoard.togglePiece(currRow, i);
       }
     }
   };
   placeQueens(0);
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  // console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
