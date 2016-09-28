@@ -50,6 +50,7 @@ window.countNRooksSolutions = function(n) {
   // permutations for n === 3 => [[1,0,0],[0,1,0],[0,0,1]]
   // permutations for n === 2 => [[1,0],[0,1]]
   var loop = function (num, accumulator, rookIndex) {
+    // could checkConflict function be replaced by array that marks the columns where a rook is sitting? like bitwise nqueens
     var conflict = checkForConflict(accumulator, rookIndex);
     if ( num === 0 && !conflict) {
       solutionCount += 1;
@@ -102,7 +103,7 @@ window.countNQueensSolutions = function(n) {
         newBoard.togglePiece(currRow, i);
         // if no conflict recurse
         if (!newBoard.hasAnyQueenConflictsOn(currRow, i)) {
-          placeQueens(currRow + 1); 
+          placeQueens(currRow + 1);
         }
         newBoard.togglePiece(currRow, i);
       }
